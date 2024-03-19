@@ -56,8 +56,8 @@ def distance(x, y, xp, yp ):
 
 class Tank:
 	def __init__(self, pos_x, pos_y, can_shoot, direction):
-		self.pos_x = pos_x;
-		self.pos_y = pos_y;
+		self.x = pos_x;
+		self.y = pos_y;
 		self.can_shoot = can_shoot;
 		self.direction = direction;
 		
@@ -77,7 +77,8 @@ class Bullet:
 		self.distance_player = distance_player
 
 while True:
-	state = test_data
+	# state = test_data
+	state = json.loads(input())
 	
 	# Parsing
 	width = state["map"]["width"]
@@ -104,15 +105,15 @@ while True:
 	
 	# Algo
 	for bullet in opps_bullets:
-		danger_zone.append(Bullet(bullet.x, bullet.y, distance(bullet.x, bullet.y, player.x, player.y)))
+		danger_zone.append(Bullet(bullet.x, bullet.y,bullet.dx, bullet.dy, distance(bullet.x, bullet.y, player.x, player.y)))
 		for i in range (0, 200):
-			danger_zone.append(Bullet(bullet.x + bullet.dx * i, bullet.y + bullet.dy * i, distance(bullet.x + bullet.dx * i, bullet.y + bullet.dy * i, player.x, player.y)))
+			danger_zone.append(Bullet(bullet.x + bullet.dx * i, bullet.y + bullet.dy * i,bullet.dx, bullet.dy, distance(bullet.x + bullet.dx * i, bullet.y + bullet.dy * i, player.x, player.y)))
 	
-	sorted_danger_zone = sorted(danger_zone, key=lambda x: x.distance, reverse=True)
+	sorted_danger_zone = sorted(danger_zone, key=lambda x: x.distance_player, reverse=True)
 	
 	direction = "NONE"
 	if (len(sorted_danger_zone) != 0):
-		if (sorted_danger_zone[0].distance <= 8):
+		if (sorted_danger_zone[0].distance_player <= 8):
 			direction = random.choice(["UP", "DOWN", "LEFT", "RIGHT"])
 
 	# To Output
