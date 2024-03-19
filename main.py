@@ -1,6 +1,7 @@
 import json
 import sys
 import random
+from math import sqrt
 
 def distance(x, y, xp, yp ):
 	return (sqrt((xp - x)**2 + (yp - y)**2 ))
@@ -25,50 +26,46 @@ class Bullet:
 		self.y = y
 		self.dx = dx
 		self.dy = dy
-		self.distance_player = self.distance_player
+		self.distance_player = distance_player
 
 while True:
 	state = json.loads(input())
 	
 	# Parsing
-	width = state.map.width
-	height = state.map.height
+	width = state["map"]["width"]
+	height = state["map"]["height"]
 	
-	player = Tank(state.player.x, state.player.y, state.player.canShoot, None) 
+	player = Tank(state["player"]["x"], state["player"]["y"], state["player"]["canShoot"], None) 
 	ennemies = []
 	walls = []
 	my_bullets = []
 	opps_bullets = []
 	danger_zone = []
 
-	for ennemy in state.opponents:
-		ennemies.append(Tank(ennemy.x, ennemy.y, None, ennemy.direction))
+	for ennemy in state["opponents"]:
+		ennemies.append(Tank(ennemy["x"], ennemy["y"], None, ennemy["direction"]))
 		
-	for wall in state.walls:
-		walls.append(Tank(wall.x, wall.y, wall.width, wall.height))
+	for wall in state["map"]["walls"]:
+		walls.append(Tank(wall["x"], wall["y"], wall["width"], wall["height"]))
 		
-	for bullet in state.bullets.fromPlayer:
-		my_bullets.append(Tank(bullet.x, bullet.y, bullet.dx, bullet.dy, None))
+	for bullet in state["bullets"]["fromPlayer"]:
+		my_bullets.append(Bullet(bullet["x"], bullet["y"], bullet["dx"], bullet["dy"], None))
 		
-	for bullet in state.bullets.fromOpponents:
-		opps_bullets.append(Tank(bullet.x, bullet.y, bullet.dx, bullet.dy, None))
+	for bullet in state["bullets"]["fromOpponents"]:
+		opps_bullets.append(Bullet(bullet["x"], bullet["y"], bullet["dx"], bullet["dy"], None))
 	
 	# Algo
 	for bullet in opps_bullets:
-		danger_zone.append(Bullet(bullet.x, bullet.x, distance(bullet.x, bullet.y, player.x, player.y)))
+		danger_zone.append(Bullet(bullet.x, bullet.y, distance(bullet.x, bullet.y, player.x, player.y)))
 		for i in range (0, 200):
 			danger_zone.append(Bullet(bullet.x + bullet.dx * i, bullet.y + bullet.dy * i, distance(bullet.x + bullet.dx * i, bullet.y + bullet.dy * i, player.x, player.y)))
 	
-	direction = random.choice(["UP", "DOWN", "LEFT", "RIGHT"])
-	newBullet = None
-	if state["player"]["canShoot"]:
-		newBullet = {
-			"dx": random.random() - 0.5,
-			"dy": random.random() - 0.5
-		}
-		
-
-
+	sorted_danger_zone = sorted(danger_zone, key=lambda x: x.distance, reverse=True)
+	
+	direction = "NONE"
+	if (len(sorted_danger_zone) != 0):
+		if (sorted_danger_zone[0].distance <= 8):
+			direction = random.choice(["UP", "DOWN", "LEFT", "RIGHT"])
 
 	# To Output
 	#{
@@ -80,6 +77,6 @@ while True:
 		
 	print(json.dumps({
 		"direction": direction,
-		"newBullet": newBullet
+		"newBullet": {}
 	}))
 	sys.stdout.flush()
