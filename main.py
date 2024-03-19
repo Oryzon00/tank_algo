@@ -3,6 +3,54 @@ import sys
 import random
 from math import sqrt
 
+test_data = {
+	"map": {
+		"width": 400,
+		"height": 200,
+		"walls": [{ 
+			"x": 20,
+			"y": 40,
+			"width": 100,
+			"height": 100
+		}, {
+			"x": 320,
+			"y": 100,
+			"width": 20,
+			"height": 50
+		}]
+	},
+	"player": {
+		"x": 250,
+		"y": 150,
+		"canShoot": True
+	},
+	"opponents": [{ 
+		"x": 150,
+		"y": 72,
+		"direction": "UP"
+	}, {
+		"x": 300,
+		"y": 100,
+		"direction": "NONE"
+	}],
+	"bullets": {
+		"fromPlayer": [{ 
+			"x": 50,
+			"y": 20,
+			"dx": 2,
+			"dy": 1	
+		}],
+		"fromOpponents": [{
+			"x": 50,
+			"y": 40,
+			"dx": 2,
+			"dy": 1
+		}]
+	}
+}
+
+
+
 def distance(x, y, xp, yp ):
 	return (sqrt((xp - x)**2 + (yp - y)**2 ))
 
@@ -29,7 +77,7 @@ class Bullet:
 		self.distance_player = distance_player
 
 while True:
-	state = json.loads(input())
+	state = test_data
 	
 	# Parsing
 	width = state["map"]["width"]
@@ -46,7 +94,7 @@ while True:
 		ennemies.append(Tank(ennemy["x"], ennemy["y"], None, ennemy["direction"]))
 		
 	for wall in state["map"]["walls"]:
-		walls.append(Tank(wall["x"], wall["y"], wall["width"], wall["height"]))
+		walls.append(Wall(wall["x"], wall["y"], wall["width"], wall["height"]))
 		
 	for bullet in state["bullets"]["fromPlayer"]:
 		my_bullets.append(Bullet(bullet["x"], bullet["y"], bullet["dx"], bullet["dy"], None))
