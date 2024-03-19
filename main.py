@@ -2,6 +2,9 @@ import json
 import sys
 import random
 
+def distance(x, y, xp, yp ):
+    return (sqrt((xp - x)**2 + (yp - y)**2 ))
+
 class Tank:
 	def __init__(self, pos_x, pos_y, can_shoot, direction):
 		self.pos_x = pos_x;
@@ -17,15 +20,11 @@ class Wall:
 		self.height = height
 		
 class Bullet:
-	def __init__(self, x, y, dx, dy):
+	def __init__(self, x, y, dx, dy, distance_player):
 		self.x = x
 		self.y = y
 		self.dx = dx
 		self.dy = dy
-        self.
-
-def check_direction(danger_zone, player_tank, direction):
-    
 
 while True:
 	state = json.loads(input())
@@ -40,7 +39,7 @@ while True:
 	my_bullets = []
 	opps_bullets = []
     danger_zone = []
-	
+
 	for ennemy in state.opponents:
 		ennemies.append(Tank(ennemy.x, ennemy.y, None, ennemy.direction))
 		
@@ -55,9 +54,9 @@ while True:
 	
     # Algo
     for bullet in opps_bullets:
-        danger_zone.append({x: bullet.x, y: bullet.x});
+        danger_zone.append({x: bullet.x, y: bullet.x, distance_player: distance(x, y, player.x, player.y)}});
         for i in range (0, 200):
-            danger_zone.append({x: bullet.x + bullet.dx * i, y: bullet.y + bullet.dy * i })
+        danger_zone.append({x: bullet.x + bullet.dx * i, y: bullet.y + bullet.dy * i, distance_player: distance(x, y, player.x, player.y)})
 	
     direction = random.choice(["UP", "DOWN", "LEFT", "RIGHT"])
 	newBullet = None
