@@ -22,6 +22,10 @@ class Bullet:
 		self.y = y
 		self.dx = dx
 		self.dy = dy
+        self.
+
+def check_direction(danger_zone, player_tank, direction):
+    
 
 while True:
 	state = json.loads(input())
@@ -35,6 +39,7 @@ while True:
 	walls = []
 	my_bullets = []
 	opps_bullets = []
+    danger_zone = []
 	
 	for ennemy in state.opponents:
 		ennemies.append(Tank(ennemy.x, ennemy.y, None, ennemy.direction))
@@ -48,8 +53,23 @@ while True:
 	for bullet in state.bullets.fromOpponents:
 		opps_bullets.append(Tank(bullet.x, bullet.y, bullet.dx, bullet.dy))
 	
+    # Algo
+    for bullet in opps_bullets:
+        danger_zone.append({x: bullet.x, y: bullet.x});
+        for i in range (0, 200):
+            danger_zone.append({x: bullet.x + bullet.dx * i, y: bullet.y + bullet.dy * i })
 	
-	
+    direction = random.choice(["UP", "DOWN", "LEFT", "RIGHT"])
+	newBullet = None
+	if state["player"]["canShoot"]:
+		newBullet = {
+			"dx": random.random() - 0.5,
+			"dy": random.random() - 0.5
+		}
+		
+
+
+
 	# To Output
 	#{
 	#	"direction": "RIGHT",
